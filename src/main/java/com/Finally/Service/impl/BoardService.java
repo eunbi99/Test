@@ -4,24 +4,34 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import com.Finally.VO.BoardVO;
+import org.springframework.stereotype.Service;
 
+import com.Finally.VO.BoardVO;
+import com.Finally.VO.Criteria;
+
+@Service
 public interface BoardService {
-//1.ê²Œì‹œê¸€ ì‘ì„±
+	
+	//1.°Ô½Ã±Û ÀÛ¼º
 	public void create(BoardVO vo) throws Exception;
-//2.ê²Œì‹œê¸€ ìƒì„¸ë³´ê¸°
+	//2.°Ô½Ã±Û »ó¼¼º¸±â
 	public BoardVO read(int num) throws Exception;
-//3.ê²Œì‹œê¸€ ìˆ˜ì •
+	//3.°Ô½Ã±Û ¼öÁ¤
 	public void update(BoardVO vo) throws Exception;
-//4.ê²Œì‹œê¸€ ì‚­ì œ
+	//4.°Ô½Ã±Û »èÁ¦
 	public void delete(int num) throws Exception;
-//5.ê²Œì‹œê¸€ ì „ì²´ ëª©ë¡
+	//5.°Ô½Ã±Û ÀüÃ¼ ¸ñ·Ï
 	public List<BoardVO> listAll(BoardVO vo) throws Exception;
-//6.ê²Œì‹œê¸€ ì¡°íšŒ
+	//6.°Ô½Ã±Û Á¶È¸
 	public void increasereadcount(int num, HttpSession session) throws Exception;
 
 	public String mapperTest();
-//7.ê²Œì‹œê¸€ ë ˆì½”ë“œ ê°¯ìˆ˜ ë©”ì„œë“œ ì¶”ê°€
+	//7.°Ô½Ã±Û ·¹ÄÚµå °¹¼ö ¸Ş¼­µå Ãß°¡
 	public int countArticle(String searchOption,String keyword) throws Exception;
+//
+	public List<BoardVO> listCriteria(Criteria cri) throws Exception;
+//
+	public int listCount() throws Exception;
+
 	
 }

@@ -2,52 +2,55 @@ package com.Finally.Service.impl;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import com.Finally.VO.BoardVO;
+import com.Finally.VO.Criteria;
 import com.Finally.dao.impl.BoardDAO;
 
 @Service
 public class BoardServiceImpl implements BoardService {
-
-	@Autowired
-	BoardDAO boardDao;
 	
-	//1.ê²Œì‹œê¸€ ì“°ê¸°
+	@Inject
+	private BoardDAO boardDao;
+
+	//1.°Ô½Ã±Û ¾²±â
 	@Override
 	public void create(BoardVO vo) throws Exception{
 		String content=vo.getContent();
-		//ì¤„ë°”ê¿ˆ ë¬¸ì ì²˜ë¦¬
+		//ÁÙ¹Ù²Ş ¹®ÀÚ Ã³¸®
 		content=content.replace("<","&lt;");
 		vo.setContent(content);
 		boardDao.create(vo);
 	}
-	//2.ê²Œì‹œê¸€ ìƒì„¸ë³´ê¸°
+	//2.°Ô½Ã±Û »ó¼¼º¸±â
 	@Override
 	public BoardVO read(int num) throws Exception{
 		return boardDao.read(num);
 		
 	}
-	//3.ê²Œì‹œê¸€ ìˆ˜ì •
+	//3.°Ô½Ã±Û ¼öÁ¤
 	@Override 
 	public void update(BoardVO vo) throws Exception{
 		boardDao.update(vo);
 	}
-	//4.ê²Œì‹œê¸€ ì‚­ì œ
+	//4.°Ô½Ã±Û »èÁ¦
 	@Override
 	public void delete(int num) throws Exception{
 		 boardDao.delete(num);
 	}
-	//5.ê²Œì‹œê¸€ ì „ì²´ ëª©ë¡
+	//5.°Ô½Ã±Û ÀüÃ¼ ¸ñ·Ï
 	@Override
-	public List<BoardVO> listAll(BoardVO vo) throws Exception{
+	public List<BoardVO> listAll(BoardVO vo) throws Exception {
 		return boardDao.listAll(vo);
 	}
-	//6.ê²Œì‹œê¸€ ì¡°íšŒìˆ˜ì¦ê°€
+	//6.°Ô½Ã±Û Á¶È¸¼öÁõ°¡
 	@Override
 	public void increasereadcount(int num, HttpSession session) throws Exception {
 		// TODO Auto-generated method stub
@@ -55,26 +58,35 @@ public class BoardServiceImpl implements BoardService {
 		if (session.getAttribute("update_time_"+num) !=null) {
 			update_time=(long)session.getAttribute("update_time_"+num);
 		}
-		//í˜„ì¬ ì‹œê°„ current_timeì— ì €ì¥
+		//ÇöÀç ½Ã°£ current_time¿¡ ÀúÀå
 		long current_time=System.currentTimeMillis();
-		//í˜„ì¬ì‹œê°„-ì—´ëŒì‹œê°„>ì¼ì •ì‹œê°„
+		//ÇöÀç½Ã°£-¿­¶÷½Ã°£>ÀÏÁ¤½Ã°£
 		if(current_time - update_time>5*1000) {
 			boardDao.increasereadcount(num);
 			session.setAttribute("update_time"+num,current_time);
 		
 		}
 	}
-	//7.ê²Œì‹œê¸€ ì „ì²´ ëª©ë¡ boardDAO.listAllì—ì„œ ë©”ì†Œë“œ í˜¸ì¶œ
+	//7.°Ô½Ã±Û ÀüÃ¼ ¸ñ·Ï boardDAO.listAll¿¡¼­ ¸Ş¼Òµå È£Ãâ
 	@Override
 	public int countArticle(String searchOption,String keyword) throws Exception{
 		return boardDao.countArticle(searchOption, keyword);
 		
 }
+	//ÆäÀÌÂ¡
+	@Override
+    public List<BoardVO> listCriteria(Criteria cri) throws Exception{
+        return boardDao.listCriteria(cri);
+    }
+	//ÀüÃ¼ ±Û Á¶È¸
+    @Override
+    public int listCount() throws Exception  {
+        return boardDao.listCount();
+    }
 	@Override
 	public String mapperTest() {
 		// TODO Auto-generated method stub
-		return boardDao.mapperTest();
+		return null;
 	}
-	
-	
+
 }

@@ -1,58 +1,57 @@
 package com.Finally.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.Finally.Service.impl.BoardService;
 import com.Finally.VO.BoardVO;
+import com.Finally.VO.Criteria;
+import com.Finally.VO.PageMaker;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class BoardController {
-	@Inject
-	BoardService boardService;
 	
-	//1.ê²Œì‹œê¸€ ëª©ë¡
-	@RequestMapping(value="list.do")
-	public ModelAndView list(HttpServletRequest req, HttpServletResponse res) throws Exception{
-		String searchOption = req.getParameter("searchOption");
-		String keyword = req.getParameter("keyword");
-		
-		BoardVO vo = new BoardVO();
-		vo.setSearchOption(searchOption);
-		vo.setKeyword(keyword);
-		List<BoardVO> list =boardService.listAll(vo);
-		//String list= boardService.mapperTest();
-		System.out.println("list => " + list);
-		ModelAndView mav =new ModelAndView();
-		mav.setViewName("board/list");
-		mav.addObject("list",list);
-		return mav;
+	@Inject
+	private BoardService boardService;
+	//1.°Ô½Ã±Û ¸ñ·Ï
+	@RequestMapping(value = "list.do", method = RequestMethod.GET)
+	public String list(Criteria cri, Model model) throws Exception {
+	
 
+	model.addAttribute("list", boardService.listCriteria(cri));
+	PageMaker pageMaker = new PageMaker();
+	pageMaker.setCri(cri);
+	pageMaker.setTotalCount(boardService.listCount());
+	model.addAttribute("pageMaker", pageMaker);
+	
+	return "redirect:/list.do";
 	}
-	//2.ê²Œì‹œê¸€ ì‘ì„±í™”ë©´
+
+
+	//2.°Ô½Ã±Û ÀÛ¼ºÈ­¸é
 	@RequestMapping(value="write.do",method=RequestMethod.GET)
 	public String write() {
 		return "board/write";		
 	}
-	//2-1.ì‘ì„±ì²˜ë¦¬
+	//2-1.ÀÛ¼ºÃ³¸®
 	@RequestMapping(value="insert.do",method=RequestMethod.POST)
 	public String insert(@ModelAttribute BoardVO vo) throws Exception{
 		boardService.create(vo);
 		return "redirect:/list.do";
 	}
 	
-	//3.ìƒì„¸ë‚´ìš© ì¡°íšŒ,ì¡°íšŒìˆ˜ ì¦ê°€
+	//3.»ó¼¼³»¿ë Á¶È¸,Á¶È¸¼ö Áõ°¡
 	@RequestMapping(value="/board/view.do",method=RequestMethod.GET)
 	public ModelAndView ModelAndView(@RequestParam int num,HttpSession session) throws Exception{
 		boardService.increasereadcount(num,session);  
@@ -62,18 +61,18 @@ public class BoardController {
 		return mav;
 	}
 	
-	//4.ê²Œì‹œê¸€ ìˆ˜ì •
+	//4.°Ô½Ã±Û ¼öÁ¤
 	@RequestMapping(value="/board/update.do",method= {RequestMethod.GET, RequestMethod.POST})
 	public String update(@ModelAttribute BoardVO vo) throws Exception{
 		boardService.update(vo);
 		return "redirect:/list.do";
 	}	
 	
-	//5.ê²Œì‹œê¸€ ì‚­ì œ
+	//5.°Ô½Ã±Û »èÁ¦
 	@RequestMapping(value="/board/delete.do",method= {RequestMethod.GET, RequestMethod.POST})
 	public String delete(@RequestParam int num) throws Exception{
 		boardService.delete(num);
 		return "redirect:/list.do";
 	}
-
+    
 }
