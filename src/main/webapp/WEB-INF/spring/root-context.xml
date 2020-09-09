@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:aop="http://www.springframework.org/schema/aop"
+   xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+      http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+      http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+   
+   <!-- Root Context: defines shared resources visible to all other web components -->
+<!--    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+       <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+       <property name="url" value="jdbc:mysql://localhost:3306/example?useSSL=false&amp;autoReconnection=true" />
+       <property name="username" value="root"></property>
+       <property name="password" value="1234"></property>
+   </bean> -->
+   
+   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+       <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+       <property name="url" value="jdbc:mysql://localhost:3306/final?useSSL=false&amp;autoReconnection=true&amp;serverTimezone=UTC" />
+       <property name="username" value="root"></property>
+       <property name="password" value="1234"></property>
+    </bean>
+    
+      <!-- mybatis SqlSessionFactoryBean -->
+    <!-- [4] MemberDaoImp 빈 등록 --> 
+<!--    <bean id="BoardDAO" class="com.Finally.dao.impl.BoardDAOImpl"> 
+   <property name="sqlSession" ref="sqlSession" />
+   </bean>
+     -->
+   <!-- SqlSessionFactory 객체 주입 -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+   		<property name="dataSource" ref="dataSource" />
+   		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+   		<property name="mapperLocations" value="classpath*:Mapper/*Mapper.xml"></property>
+   </bean>
+   
+   <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+
+	<constructor-arg index="0" ref="sqlSessionFactory" />
+
+	</bean>
+    
+<!--    <bean id="BoardDAO" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface" value="com.Finally.dao.impl"></property>
+	</bean>
+ -->
+	<!-- <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate"> 
+		<constructor-arg index="0" ref="sqlSession"/> 
+	</bean> -->
+
+ </beans>
